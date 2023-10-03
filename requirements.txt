@@ -1,5 +1,4 @@
 hmmer
-anarci==1.3
 Bio
 biopython
 keras
