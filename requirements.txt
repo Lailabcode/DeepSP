@@ -1,9 +1,0 @@
-hmmer
-Bio
-biopython
-anarci==1.3
-keras
-tensorflow
-numpy
-pandas
-streamlit
