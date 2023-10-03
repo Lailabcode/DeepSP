@@ -1,6 +1,7 @@
 hmmer
 Bio
 biopython
+anarci
 keras
 tensorflow
 numpy
