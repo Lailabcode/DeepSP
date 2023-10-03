@@ -2,6 +2,7 @@ hmmer
 Bio
 biopython
 keras
+tensorflow
 numpy
 pandas
 streamlit
