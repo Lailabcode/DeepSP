@@ -4,20 +4,16 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - anarci=2021.02.04=pyhdfd78af_0
-  - biopython=1.78=py311h5eee18b_0
-  - hmmer=3.3.2=h87f3376_2
-  - keras=2.12.0=py311h06a4308_0
-  - keras-preprocessing=1.1.2=pyhd3eb1b0_0
-  - numpy=1.23.5=py311h08b1b3b_1
-  - numpy-base=1.23.5=py311hf175353_1
-  - pandas=2.0.3=py311ha02d727_0
-  - pip=23.2.1=py311h06a4308_0
-  - python=3.11.5=h7a1cb2a_0
-  - python-dateutil=2.8.2=pyhd3eb1b0_0
-  - python-flatbuffers=2.0=pyhd3eb1b0_0
-  - python-tzdata=2023.3=pyhd3eb1b0_0
-  - tensorflow=2.12.0=mkl_py311h34a0fa1_0
-  - tensorflow-base=2.12.0=mkl_py311he5f8e37_0
-  - tensorflow-estimator=2.12.0=py311h06a4308_0
+  - anarci=2021.02.04
+  - biopython=1.78
+  - hmmer=3.3.2
+  - keras=2.12.0
+  - keras-preprocessing=1.1.2
+  - numpy=1.23.5
+  - numpy-base=1.23.5
+  - pandas=2.0.3
+  - python=3.11.5
+  - tensorflow=2.12.0
+  - tensorflow-base=2.12.0
+  - tensorflow-estimator=2.12.0
 prefix: /home/pklai/anaconda3/envs/web2
