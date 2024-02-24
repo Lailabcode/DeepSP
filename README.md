@@ -10,5 +10,3 @@ DeepSP is an antibody-specific surrogate model that can generate 30 spatial prop
 # Citation
 ...
 
-# Commerical use
-If you wish to obtain Software for any commercial purposes, you will need to execute a separate licensing agreement and pay a fee. In that case please contact: plai3@stevens.edu
