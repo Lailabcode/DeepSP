@@ -13,5 +13,3 @@ DeepSP is currently under review and is temporarily available on bioRxiv for ref
 
 https://www.biorxiv.org/content/10.1101/2024.02.28.582582v1
 
-# Commerical use
-If you wish to obtain Software for any commercial purposes, you will need to execute a separate licensing agreement and pay a fee. In that case please contact: plai3@stevens.edu
