@@ -13,7 +13,8 @@ import sys
 import pandas as pd
 import numpy as np
 
-def process_csv_input(files: list[str]) -> list[tuple[SeqRecord]]:
+
+def process_csv_input(files):
     """
     Take antibody sequences from a CSV input.
 
@@ -35,7 +36,7 @@ def process_csv_input(files: list[str]) -> list[tuple[SeqRecord]]:
     return antibodies
 
 
-def process_fasta_input(files: list[str]) -> list[tuple[SeqRecord]]:
+def process_fasta_input(files):
     """
     Take antibody sequences from FASTA input.
 
@@ -61,8 +62,7 @@ def process_fasta_input(files: list[str]) -> list[tuple[SeqRecord]]:
     return antibodies
 
 
-def anarci_align(antibodies: list[tuple[SeqRecord]],
-                 output_filename: str = 'seq_aligned_HL.txt') -> str:
+def anarci_align(antibodies):
     """
     Call ANARCI on both chains of the antibody, then merge the outputs in format
     accepted by downstream analyses. Returns a filename with merged results.
