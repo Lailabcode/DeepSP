@@ -9,6 +9,6 @@ DeepSP is an antibody-specific surrogate model that can generate 30 spatial prop
 
 # Citation
 
-Kalejaye, L.; Wu, I.-E.; Terry, T.; Lai, P.-K. DeepSP: Deep Learning-Based Spatial Properties to Predict Monoclonal Antibody Stability. Comput. Struct. Biotechnol. J. 2024, 23, 2220–2229 (https://doi.org/10.1016/j.csbj.2024.05.029)
+Kalejaye, L.; Wu, I.-E.; Terry, T.; Lai, P.-K. DeepSP: Deep Learning-Based Spatial Properties to Predict Monoclonal Antibody Stability. *Comput. Struct. Biotechnol. J.* 2024, 23, 2220–2229 (https://doi.org/10.1016/j.csbj.2024.05.029)
 
 
