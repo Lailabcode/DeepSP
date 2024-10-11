@@ -3,9 +3,20 @@ DeepSP is an antibody-specific surrogate model that can generate 30 spatial prop
 
 # How to generate descriptors (features) using DeepSP
 
-- Prepare your input file according to the format DeepSP_input.csv
+DeepSP can be run either using an IPython notebook or as a callable script.
+
+### Using IPython notebook
+- Prepare your input file in the same format as DeepSP_input.csv
 - Run the notebook file DeepSP_predictor.ipynb
-- DeepSP structural properties for sequences inputed, would be polulated and saved to a csv file.
+- DeepSP structural properties for input sequences would be calculated and saved
+to `DeepSP_descriptors.csv`.
+
+### As a callable script
+- Activate conda environment from `environment.yml`
+- Prepare your input either as a CSV or as a directory of FASTAs (each should
+contain one antibody, with heavy and light chain IDs postfixed `_VH` and `_VL`
+respectively)
+- Call `./DeepSP_predict.py -i <input files> --in_format <fasta|csv> -o <out.csv>`
 
 # Citation
 
