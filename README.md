@@ -4,20 +4,21 @@ DeepSP is an antibody-specific surrogate model that can generate 30 spatial prop
 # How to generate descriptors (features) using DeepSP
 
 ## Option 1 - Google colab notebook
-- Prepare your input file according to the format DeepSP_input.csv
-- Run the notebook file DeepSP_predictor.ipynb
-- DeepSP structural properties for sequences inputed, will be populated and saved to a csv file - 'DeepSP_descriptor.csv'.
+- Run
+1. Prepare your input file according to the format DeepSP_input.csv
+2. Run the notebook file DeepSP_predictor.ipynb
+3. DeepSP structural properties for sequences inputed, will be populated and saved to a csv file - 'DeepSP_descriptor.csv'.
 
 ## Option 2 - Linux environment 
-- create an environment and install necessary package
-	conda create -n deepSP python=3.9.13
-	source activate deepSP
-	conda install -c bioconda anarci
-	pip install keras==2.11.0 tensorflow-cpu==2.11.0 scikit-learn==1.0.2 pandas numpy==1.26.4
-
-- Prepare your input file according to the format DeepSP_input.csv
-- Run the python file deepsp_predictor.py - 'python deepsp_predictor.py'
-- DeepSP structural properties for sequences inputed, will be obtained and saved to a csv file - 'DeepSP_descriptor.csv'.
+- Set up (bash)- create an environment and install necessary package
+1. conda create -n deepSP python=3.9.13
+2. source activate deepSP
+3. conda install -c bioconda anarci
+4. pip install keras==2.11.0 tensorflow-cpu==2.11.0 scikit-learn==1.0.2 pandas numpy==1.26.4
+- Run
+1. Prepare your input file according to the format DeepSP_input.csv
+2. Run the python file deepsp_predictor.py - 'python deepsp_predictor.py'
+3. DeepSP structural properties for sequences inputed, will be obtained and saved to a csv file - 'DeepSP_descriptor.csv'.
 
 
 # Citation
