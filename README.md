@@ -1,7 +1,7 @@
 # DeepSP
 DeepSP is an antibody-specific surrogate model that can generate 30 spatial properties of an antibody solely based on their sequence.
 
-# How to generate descriptors (features) using DeepSP (can be run on google colab notebook OR on a linux environment).
+## How to generate descriptors (features) using DeepSP (can be run on google colab notebook OR on a linux environment).
 
 ## Google colab notebook
 - Prepare your input file according to the format DeepSP_input.csv
