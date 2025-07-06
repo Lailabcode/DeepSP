@@ -2,17 +2,27 @@
 import numpy as np
 import pandas as pd
 import random
-
+import os # For TF environment variables
+from pathlib import Path # For path management
 
 # Import machine learning libraries
 import tensorflow as tf
-import keras
-from keras.models import model_from_json
-from keras.layers import BatchNormalization
-from keras.callbacks import ModelCheckpoint
-from keras.optimizers import Adam
+# import keras # Keras is now part of TensorFlow
+from tensorflow.keras.models import model_from_json
+from tensorflow.keras.layers import BatchNormalization, Input, Conv1D, Dropout, MaxPooling1D, Flatten, Dense
+from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.models import Sequential
+
+
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
+
+# Import from our utility script
+from utils import get_project_root, load_input_data_for_training, one_hot_encoder
+
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0" # Should be set before TF import
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 
 
 np.random.seed(0)
@@ -20,325 +30,207 @@ random.seed(0)
 tf.random.set_seed(0)
 
 
-def load_input_data(filename):
-    name_list = []
-    seq_list = []
-    score_list = []
-
-    with open(filename) as datafile:
-        for line in datafile:
-            line = line.strip().split()
-            name_list.append(line[0])
-            seq_list.append(line[1])
-            score_temp = []
-            for i in range(len(line[2:])):
-                data = float(line[i + 2])
-                score_temp.append(data)
-            score_list.append(score_temp)
-    return name_list, seq_list, score_list
-
-
-def one_hot_encoder(s):
-    d = {
-        "A": 0,
-        "C": 1,
-        "D": 2,
-        "E": 3,
-        "F": 4,
-        "G": 5,
-        "H": 6,
-        "I": 7,
-        "K": 8,
-        "L": 9,
-        "M": 10,
-        "N": 11,
-        "P": 12,
-        "Q": 13,
-        "R": 14,
-        "S": 15,
-        "T": 16,
-        "V": 17,
-        "W": 18,
-        "Y": 19,
-        "-": 20,
-    }
-
-    x = np.zeros((len(d), len(s)))
-    x[[d[c] for c in s], range(len(s))] = 1
-
-    return x
-
+# one_hot_encoder is now imported from utils
+# load_input_data is now imported from utils as load_input_data_for_training
 
 def best_model_SAPpos():
-    best_model = keras.Sequential(name="model_conv1D")
-
-    best_model.add(keras.layers.Input(shape=(272, 21)))
-
-    best_model.add(
-        keras.layers.Conv1D(
-            filters=128, kernel_size=5, activation="relu", name="Conv1D_1"
-        )
-    )
+    best_model = Sequential(name="model_conv1D_SAPpos")
+    best_model.add(Input(shape=(272, 21)))
+    best_model.add(Conv1D(filters=128, kernel_size=5, activation="relu", name="Conv1D_1"))
     best_model.add(BatchNormalization())
-    best_model.add(keras.layers.Dropout(0.3))
-
-    best_model.add(
-        keras.layers.Conv1D(
-            filters=96, kernel_size=4, activation="relu", name="Conv1D_2"
-        )
-    )
+    best_model.add(Dropout(0.3))
+    best_model.add(Conv1D(filters=96, kernel_size=4, activation="relu", name="Conv1D_2"))
     best_model.add(BatchNormalization())
-
-    best_model.add(
-        keras.layers.Conv1D(
-            filters=32, kernel_size=5, activation="relu", name="Conv1D_3"
-        )
-    )
+    best_model.add(Conv1D(filters=32, kernel_size=5, activation="relu", name="Conv1D_3"))
     best_model.add(BatchNormalization())
-
-    best_model.add(keras.layers.MaxPooling1D(pool_size=2, name="MaxPooling1D"))
-    best_model.add(keras.layers.Flatten())
-
-    # Input layer and First hidden layer of neural network
-    best_model.add(keras.layers.Dense(units=112, activation="relu", name="Dense_1"))
-    best_model.add(keras.layers.Dense(units=48, activation="relu", name="Dense_2"))
-    best_model.add(keras.layers.Dense(10, name="Dense_3"))
-
+    best_model.add(MaxPooling1D(pool_size=2, name="MaxPooling1D"))
+    best_model.add(Flatten())
+    best_model.add(Dense(units=112, activation="relu", name="Dense_1"))
+    best_model.add(Dense(units=48, activation="relu", name="Dense_2"))
+    best_model.add(Dense(10, name="Dense_3"))
     return best_model
 
 
 def best_model_SCMpos():
-    best_model = keras.Sequential(name="model_conv1D")
-
-    best_model.add(keras.layers.Input(shape=(272, 21)))
-
-    best_model.add(
-        keras.layers.Conv1D(
-            filters=128, kernel_size=4, activation="relu", name="Conv1D_1"
-        )
-    )
+    best_model = Sequential(name="model_conv1D_SCMpos")
+    best_model.add(Input(shape=(272, 21)))
+    best_model.add(Conv1D(filters=128, kernel_size=4, activation="relu", name="Conv1D_1"))
     best_model.add(BatchNormalization())
-    best_model.add(keras.layers.Dropout(0.4))
-
-    best_model.add(
-        keras.layers.Conv1D(
-            filters=112, kernel_size=4, activation="relu", name="Conv1D_2"
-        )
-    )
+    best_model.add(Dropout(0.4))
+    best_model.add(Conv1D(filters=112, kernel_size=4, activation="relu", name="Conv1D_2"))
     best_model.add(BatchNormalization())
-    best_model.add(keras.layers.Dropout(0.4))
-
-    best_model.add(
-        keras.layers.Conv1D(
-            filters=144, kernel_size=5, activation="relu", name="Conv1D_3"
-        )
-    )
+    best_model.add(Dropout(0.4))
+    best_model.add(Conv1D(filters=144, kernel_size=5, activation="relu", name="Conv1D_3"))
     best_model.add(BatchNormalization())
-    best_model.add(keras.layers.Dropout(0.0))
-
-    best_model.add(keras.layers.MaxPooling1D(pool_size=2, name="MaxPooling1D"))
-    best_model.add(keras.layers.Flatten())
-
-    # Input layer and First hidden layer of neural network
-    best_model.add(keras.layers.Dense(units=128, activation="relu", name="Dense_1"))
-    best_model.add(keras.layers.Dense(10, name="Dense_2"))
-
+    best_model.add(Dropout(0.0))
+    best_model.add(MaxPooling1D(pool_size=2, name="MaxPooling1D"))
+    best_model.add(Flatten())
+    best_model.add(Dense(units=128, activation="relu", name="Dense_1"))
+    best_model.add(Dense(10, name="Dense_2"))
     return best_model
 
 
 def best_model_SCMneg():
-    best_model = keras.Sequential(name="model_conv1D")
-
-    best_model.add(keras.layers.Input(shape=(272, 21)))
-
-    best_model.add(
-        keras.layers.Conv1D(
-            filters=128, kernel_size=5, activation="relu", name="Conv1D_1"
-        )
-    )
+    best_model = Sequential(name="model_conv1D_SCMneg")
+    best_model.add(Input(shape=(272, 21)))
+    best_model.add(Conv1D(filters=128, kernel_size=5, activation="relu", name="Conv1D_1"))
     best_model.add(BatchNormalization())
-    best_model.add(keras.layers.Dropout(0.1))
-
-    best_model.add(
-        keras.layers.Conv1D(
-            filters=112, kernel_size=4, activation="relu", name="Conv1D_2"
-        )
-    )
+    best_model.add(Dropout(0.1))
+    best_model.add(Conv1D(filters=112, kernel_size=4, activation="relu", name="Conv1D_2"))
     best_model.add(BatchNormalization())
-
-    best_model.add(
-        keras.layers.Conv1D(
-            filters=64, kernel_size=4, activation="relu", name="Conv1D_3"
-        )
-    )
+    best_model.add(Conv1D(filters=64, kernel_size=4, activation="relu", name="Conv1D_3"))
     best_model.add(BatchNormalization())
-
-    best_model.add(keras.layers.MaxPooling1D(pool_size=2, name="MaxPooling1D"))
-    best_model.add(keras.layers.Flatten())
-
-    # Input layer and First hidden layer of neural network
-    best_model.add(keras.layers.Dense(units=128, activation="relu", name="Dense_1"))
-    best_model.add(keras.layers.Dense(10, name="Dense_2"))
-
+    best_model.add(MaxPooling1D(pool_size=2, name="MaxPooling1D"))
+    best_model.add(Flatten())
+    best_model.add(Dense(units=128, activation="relu", name="Dense_1"))
+    best_model.add(Dense(10, name="Dense_2"))
     return best_model
 
+def main():
+    project_root = get_project_root()
+    data_dir = project_root / "data"
+    # Create data_dir if it doesn't exist (though it should for input files)
+    data_dir.mkdir(parents=True, exist_ok=True)
 
-# ts = 0.2; bs = 64
-filenames = ["Deep_SAPpos_data.txt", "Deep_SCMpos_data.txt", "Deep_SCMneg_data.txt"]
-models = [best_model_SAPpos(), best_model_SCMpos(), best_model_SCMneg()]
-l_rates = [0.0001, 0.005, 0.0001]
 
-for file, model, l_rate in zip(filenames, models, l_rates):
-    prop = file.split("_")[1]
+    # ts = 0.2; bs = 64
+    filenames_data = ["Deep_SAPpos_data.txt", "Deep_SCMpos_data.txt", "Deep_SCMneg_data.txt"]
+    # Ensure model functions are called to create new instances for each loop iteration if that's the intent
+    # Or define them once if they are meant to be the same architecture object reused (Keras might complain)
+    # For safety, let's ensure they are callable to reinstantiate
+    model_fns = [best_model_SAPpos, best_model_SCMpos, best_model_SCMneg]
+    l_rates = [0.0001, 0.005, 0.0001]
 
-    name_list, seq_list, score_list = load_input_data("../data/" + file)
-    X = seq_list
-    y = score_list
+    all_results_dfs = []
+    all_history_dfs = []
 
-    # Train and compile model with best hyperparameters
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=0
-    )
-    X_train, X_val, y_train, y_val = train_test_split(
-        X_train, y_train, test_size=0.25, random_state=0
-    )
+    for data_filename, model_fn, l_rate in zip(filenames_data, model_fns, l_rates):
+        prop_type = data_filename.split("_")[1] # e.g., "SAPpos"
+        current_model = model_fn() # Instantiate a new model
 
-    X_train = [one_hot_encoder(s=x) for x in X_train]
-    X_train = np.transpose(np.asarray(X_train), (0, 2, 1))
-    X_train = np.asarray(X_train)
+        print(f"\nProcessing: {data_filename} for property type: {prop_type}")
 
-    X_test = [one_hot_encoder(s=x) for x in X_test]
-    X_test = np.transpose(np.asarray(X_test), (0, 2, 1))
-    X_test = np.asarray(X_test)
+        name_list, seq_list, score_list = load_input_data_for_training(data_dir / data_filename)
+        X = seq_list
+        y = score_list
 
-    X_val = [one_hot_encoder(s=x) for x in X_val]
-    X_val = np.transpose(np.asarray(X_val), (0, 2, 1))
-    X_val = np.asarray(X_val)
+        # Train and compile model with best hyperparameters
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=0
+        )
+        X_train, X_val, y_train, y_val = train_test_split(
+            X_train, y_train, test_size=0.25, random_state=0 # 0.25 * 0.8 = 0.2, so 60/20/20 split
+        )
 
-    y_train = np.asarray(y_train).reshape((-1, 10))
-    y_test = np.asarray(y_test).reshape((-1, 10))
-    y_val = np.asarray(y_val).reshape((-1, 10))
+        X_train_encoded = np.array([one_hot_encoder(s=x) for x in X_train])
+        X_train_encoded = np.transpose(X_train_encoded, (0, 2, 1))
 
-    optimizer = Adam(learning_rate=l_rate)
-    best_model = model
-    best_model.compile(optimizer=optimizer, loss="mae", metrics=None)
+        X_test_encoded = np.array([one_hot_encoder(s=x) for x in X_test])
+        X_test_encoded = np.transpose(X_test_encoded, (0, 2, 1))
 
-    # Create callback
-    filepath = "../data/Conv1D_regression_" + prop + ".h5"
-    checkpoint = ModelCheckpoint(
-        filepath=filepath,
-        monitor="val_loss",
-        verbose=1,
-        save_best_only=True,
-        save_weights_only=True,
-        mode="min",
-    )
-    callbacks = [checkpoint]
+        X_val_encoded = np.array([one_hot_encoder(s=x) for x in X_val])
+        X_val_encoded = np.transpose(X_val_encoded, (0, 2, 1))
 
-    # Fit the CNN to the training set
-    history = best_model.fit(
-        x=X_train,
-        y=y_train,
-        shuffle=True,
-        validation_data=(X_val, y_val),
-        epochs=50,
-        callbacks=callbacks,
-        batch_size=64,
-        verbose=2,
-    )
+        y_train_arr = np.asarray(y_train).reshape((-1, 10))
+        y_test_arr = np.asarray(y_test).reshape((-1, 10))
+        y_val_arr = np.asarray(y_val).reshape((-1, 10))
 
-    # Save the Conv1D architecture to json
-    Conv1D_regression_json = best_model.to_json()
-    with open("../data/Conv1D_regression" + prop + ".json", "w") as json_file:
-        json_file.write(Conv1D_regression_json)
+        optimizer = Adam(learning_rate=l_rate)
+        current_model.compile(optimizer=optimizer, loss="mae", metrics=["mae"]) # Added mae metric for history
 
-    # Load the Conv1D architecture from json
-    pred_model = model_from_json(Conv1D_regression_json)
+        # Create callback
+        model_weights_path = data_dir / f"Conv1D_regression_{prop_type}.h5"
+        model_json_path = data_dir / f"Conv1D_regression{prop_type}.json"
 
-    # Load weights from the best model into Conv1D model
-    pred_model.load_weights(filepath)
+        checkpoint = ModelCheckpoint(
+            filepath=str(model_weights_path), # Ensure filepath is string
+            monitor="val_loss",
+            verbose=1,
+            save_best_only=True,
+            save_weights_only=True, # Only save weights, architecture saved separately
+            mode="min",
+        )
+        callbacks_list = [checkpoint]
 
-    # Compile the loaded Conv1D model
-    pred_model.compile(optimizer=optimizer, metrics=["mae"])
+        # Fit the CNN to the training set
+        print(f"Fitting model for {prop_type}...")
+        history = current_model.fit(
+            x=X_train_encoded,
+            y=y_train_arr,
+            shuffle=True,
+            validation_data=(X_val_encoded, y_val_arr),
+            epochs=2, # Temporarily reduced for testing
+            callbacks=callbacks_list,
+            batch_size=64,
+            verbose=2,
+        )
 
-    y_pred = pred_model.predict(X_test)
+        # Save the Conv1D architecture to json
+        conv1d_regression_json = current_model.to_json()
+        with open(model_json_path, "w") as json_file:
+            json_file.write(conv1d_regression_json)
+        print(f"Saved model architecture to {model_json_path}")
 
-    best_val_loss = min(history.history["val_loss"])
+        # Load the best weights explicitly for prediction (ModelCheckpoint saved them)
+        # The current_model object might not have the best weights if training ended on a worse epoch
+        # Re-instantiate and load best weights
+        pred_model_architecture = model_fn() # Get a fresh model structure
+        pred_model_architecture.load_weights(str(model_weights_path)) # Load best weights
+        pred_model_architecture.compile(optimizer=optimizer, loss="mae", metrics=["mae"]) # Compile for prediction
 
-    # Initialize lists to store baseline MAE and mean scores for each target
-    baseline_mae_list = []
-    mean_score_list = []
+        y_pred = pred_model_architecture.predict(X_test_encoded)
 
-    for i in range(y_test.shape[1]):
-        # Calculate the baseline MAE for the i-th target
-        baseline_prediction = np.full_like(y_test[:, i], np.mean(y_test[:, i]))
-        baseline_mae = mean_absolute_error(y_test[:, i], baseline_prediction)
-        baseline_mae_list.append(baseline_mae)
+        best_val_loss = min(history.history["val_loss"])
 
-        # Calculate the mean score for the i-th target
-        mean_score = np.mean(y_test[:, i])
-        mean_score_list.append(mean_score)
+        baseline_mae_list = []
+        mean_score_list = []
+        for i in range(y_test_arr.shape[1]):
+            baseline_prediction = np.full_like(y_test_arr[:, i], np.mean(y_train_arr[:, i])) # Use train mean for baseline
+            baseline_mae = mean_absolute_error(y_test_arr[:, i], baseline_prediction)
+            baseline_mae_list.append(baseline_mae)
+            mean_score = np.mean(y_test_arr[:, i]) # Mean of the actual test scores for this target
+            mean_score_list.append(mean_score)
 
-    # Initialize lists to store metrics for each target
-    mae_list = []
-    corr_list = []
+        mae_list = []
+        corr_list = []
+        for i in range(y_test_arr.shape[1]):
+            mae = mean_absolute_error(y_test_arr[:, i], y_pred[:, i])
+            mae_list.append(mae)
+            corr = np.corrcoef(y_test_arr[:, i], y_pred[:, i])[0, 1] if len(y_test_arr[:,i]) > 1 else 0.0 # handle single sample case
+            corr_list.append(corr)
 
-    for i in range(y_test.shape[1]):
-        # Calculate MAE for the i-th target
-        mae = mean_absolute_error(y_test[:, i], y_pred[:, i])
-        mae_list.append(mae)
+        region_names = ["CDRH1", "CDRH2", "CDRH3", "CDRL1", "CDRL2", "CDRL3", "CDR", "Hv", "Lv", "Fv"]
+        result_rows = []
+        for region_idx, reg_name in enumerate(region_names):
+            result_rows.append({
+                "prop": f"{prop_type}_{reg_name}", # Corrected property name
+                "Mean_score": mean_score_list[region_idx],
+                "Baseline_MAE": baseline_mae_list[region_idx],
+                "Val_loss": best_val_loss, # This is overall model val_loss, not per-target
+                "MAE": mae_list[region_idx],
+                "R": corr_list[region_idx],
+            })
 
-        # Calculate correlation coefficient (correlation) for the i-th target
-        corr = np.corrcoef(y_test[:, i], y_pred[:, i])[0, 1]
-        corr_list.append(corr)
+        result_df = pd.DataFrame(result_rows)
+        metric_output_path = data_dir / f"hyp_metric_{prop_type}.csv"
+        result_df.to_csv(metric_output_path, index=False)
+        print(f"Saved metrics to {metric_output_path}")
+        all_results_dfs.append(result_df)
 
-    reg = [
-        "CDRH1",
-        "CDRH2",
-        "CDRH3",
-        "CDRL1",
-        "CDRL2",
-        "CDRL3",
-        "CDR",
-        "Hv",
-        "Lv",
-        "Fv",
-    ]
+        history_df = pd.DataFrame(history.history)
+        history_output_path = data_dir / f"training_history_{prop_type}.csv" # Save in data_dir
+        history_df.to_csv(history_output_path, index=False)
+        print(f"Saved training history to {history_output_path}")
+        all_history_dfs.append(history_df) # Though usually not concatenated
 
-    result_dict = {
-        "prop": [],
-        "Mean_score": [],
-        "Baseline_MAE": [],
-        "Val_loss": [],
-        "MAE": [],
-        "R": [],
-    }
+    # Concatenate all metric DataFrames
+    if all_results_dfs:
+        final_metric_df = pd.concat(all_results_dfs, ignore_index=True)
+        final_metric_output_path = data_dir / "Final_model_metric.csv"
+        final_metric_df.to_csv(final_metric_output_path, index=False)
+        print(f"Saved combined metrics to {final_metric_output_path}")
+    else:
+        print("No results to concatenate for final metrics.")
 
-    for r, i, j, k, l in zip(
-        reg, mean_score_list, baseline_mae_list, mae_list, corr_list
-    ):
-        # Append the corresponding values to the result_dict
-        result_dict["prop"].append(prop + r)
-        result_dict["Mean_score"].append(i)
-        result_dict["Baseline_MAE"].append(j)
-        result_dict["Val_loss"].append(best_val_loss)
-        result_dict["MAE"].append(k)
-        result_dict["R"].append(l)
-
-    # Create the DataFrame
-    result_df = pd.DataFrame(result_dict)
-
-    # Save the DataFrame to CSV
-    result_df.to_csv("../data/hyp_metric_" + prop + ".csv", index=False)
-
-    his_df = pd.DataFrame(history.history)
-    his_df.to_csv("his" + prop + ".csv", index=False)
-
-data_frames = []
-for file in filenames:
-    prop = file.split("_")[1]
-    infile = "hyp_metric_" + prop + ".csv"
-    df = pd.read_csv(infile)
-    data_frames.append(df)
-concatenated_df = pd.concat(data_frames, ignore_index=True)
-concatenated_df.to_csv("../data/Final_model_metric.csv", index=False)
+if __name__ == "__main__":
+    main()

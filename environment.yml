@@ -16,4 +16,5 @@ dependencies:
   - tensorflow=2.12.0
   - tensorflow-base=2.12.0
   - tensorflow-estimator=2.12.0
+  - scikit-learn # Added scikit-learn
 prefix: /home/pklai/anaconda3/envs/web2
