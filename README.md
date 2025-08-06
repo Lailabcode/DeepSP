@@ -10,6 +10,8 @@ DeepSP is an antibody-specific surrogate model that can generate 30 spatial prop
 3. DeepSP structural properties for sequences inputed, will be populated and saved to a csv file - 'DeepSP_descriptor.csv'.
 
 ## Option 2 - Linux environment 
+- git clone https://github.com/Lailabcode/DeepSP.git
+- cd DeepSP
 - Set up (bash)- create an environment and install necessary package
 1. conda create -n deepSP python=3.9.13
 2. source activate deepSP
